@@ -24,6 +24,7 @@ import static cn.enjoy.mall.wxsdk.WXPayConstants.SignType.MD5;
  */
 @RestController
 //http请求控制类  Contoller
+//直接拷贝-java模板代码-即可使用
 public class WxPayController {
     @Autowired
     WxPayConfigImpl wxPayConfig;

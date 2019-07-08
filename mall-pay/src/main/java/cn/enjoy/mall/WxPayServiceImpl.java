@@ -19,6 +19,7 @@ import java.util.Map;
 
 /**
  */
+//直接拷贝-java模板代码-即可使用
 @Service
 public class WxPayServiceImpl implements IWxPayService {
     @Autowired
@@ -43,8 +44,9 @@ public class WxPayServiceImpl implements IWxPayService {
 
     /**
      * 微信H5 支付
-     * 注意：必须再web页面中发起支付且域名已添加到开发配置中
+     * 注意：必须在web页面中发起支付且域名已添加到开发配置中
      */
+// 支付通知返回
     //微信预支付订单
     @Override
     public Map<String, String> unifiedorder(String actionId , BigDecimal payAmount, String userId){

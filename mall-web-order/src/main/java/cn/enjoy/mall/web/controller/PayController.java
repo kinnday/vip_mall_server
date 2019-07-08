@@ -18,6 +18,8 @@ public class PayController extends BaseController {
     @Reference
     private IPayService payService;
 
+//    调用微信支付连接地址：传递支付编码和支付金额
+//    返回支付二维码地址。
     @PostMapping("wxPrePay")
     public HttpResponseBody wxPrePay(Integer orderId,String payCode, BigDecimal payAmount){
         Map<String, String> preMap = payService.doPrePay(orderId,payCode,payAmount,getSessionUserId());

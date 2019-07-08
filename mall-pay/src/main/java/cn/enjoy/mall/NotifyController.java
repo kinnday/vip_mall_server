@@ -23,6 +23,7 @@ import java.util.Map;
  */
 @Controller
 //http请求控制类  Contoller
+//直接拷贝-java模板代码-即可使用
 public class NotifyController {
     @Reference
     private IPayService payService;
