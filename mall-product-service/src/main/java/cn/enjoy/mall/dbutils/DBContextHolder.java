@@ -9,6 +9,14 @@ import java.util.Stack;
  */
 public class DBContextHolder {
     /*保存系统中存在的数据源的标识符，然后通过该标识符定位到实际的数据源实体*/
+//  fxc-本地线程 保留数据库实例（主库还是从库）
+//  select*** --> salve; addXXX -->master; 只是这种没问题
+//  特殊场景：
+//  serviceAimpl: selectA updateB
+//  serviceBimpl: selectB updateB
+//  updateB -- master
+//  selectA {updateB} -- slave  出现 service里面调用service 就会出问题
+//    所以这里用了 Stack-栈！！！  先进后出
     private static final ThreadLocal<Stack<DBTypeEnum>> contextHolderStack
             = new ThreadLocal<Stack<DBTypeEnum>>(){
         @Override
@@ -23,6 +31,7 @@ public class DBContextHolder {
 
 
     public static void set(DBTypeEnum dbType) {
+//      Stack-栈！！！  先进后出
         contextHolderStack.get().push(dbType);
 //        contextHolder.set(dbType);
     }

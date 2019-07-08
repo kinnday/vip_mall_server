@@ -5,6 +5,7 @@ package cn.enjoy.mall.dbutils;
  * 往期课程咨询芊芊老师  QQ：2130753077 VIP课程咨询 依娜老师  QQ：2133576719
  * 类说明：主从库的枚举
  */
+// 枚举值- 本质是类的实例
 public enum DBTypeEnum {
     MASTER, SLAVE;
 }

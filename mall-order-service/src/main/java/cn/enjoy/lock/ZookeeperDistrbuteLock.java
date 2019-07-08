@@ -6,7 +6,7 @@ import org.I0Itec.zkclient.ZkClient;
  * Created by VULCAN on 2018/9/20.
  */
 
-
+// zk-实现分布式锁； 类似数据库插入一条数据
 public class ZookeeperDistrbuteLock  implements Lock{
     private  ZkClient zkClient = null;
 

@@ -34,6 +34,9 @@ public class ScheduledServiceImpl implements IScheduledService {
     private final String HOT_LOCK_PATH = "/hotLock";
     private final String KILL_LOCK_PATH = "/killLock";
 
+//   分布式任务调度的三种实现方式：
+//   1. zk; 2:db  ;3: zk
+//   5秒一次，可以根据需要进行调整
     @Scheduled(cron = "0/5 * * * * ?")
     public void scheduledHotProduct() {
             if(zkLock.tryLock(HOT_LOCK_PATH)){//获取分布式锁

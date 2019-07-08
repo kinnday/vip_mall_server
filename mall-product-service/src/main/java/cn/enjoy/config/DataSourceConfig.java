@@ -36,20 +36,21 @@ public class DataSourceConfig {
     @Qualifier("myRoutingDataSource")
     private DataSource myRoutingDataSource;
 
-    /*主库的数据源*/
+    /*fxc-配置：主库的数据源*/
     @Bean("masterDataSource")
     @ConfigurationProperties("c3p0-master")
     public DataSource masterDataSource() {
         return DataSourceBuilder.create().build();
     }
 
-    /*从库的数据源*/
+    /*fxc-配置：从库的数据源*/
     @Bean("slave1DataSource")
     @ConfigurationProperties("c3p0-slave")
     public DataSource slave1DataSource() {
         return DataSourceBuilder.create().build();
     }
 
+//    fxc-配置自定义的路由规则
     /*自定义数据源，内部持有了主库和从库的数据源，
        通过某种机制让应用程序在进行数据读写时，按业务情况走主库或者从库*/
     @Bean("myRoutingDataSource")

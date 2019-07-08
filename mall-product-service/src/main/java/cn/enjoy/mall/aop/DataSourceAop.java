@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 @Aspect
 @Component
 public class DataSourceAop {
+//    fxc-切面配置：根据方法名-分离select到读库。
     /*从库的切点,没有标注Master注解，并且方法名为select和get开头的方法，走从库*/
     @Pointcut("!@annotation(cn.enjoy.mall.annotation.Master) " +
             "&& (execution(* cn.enjoy.mall.service.impl..*.select*(..)) " +
