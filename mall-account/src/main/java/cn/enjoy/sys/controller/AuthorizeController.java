@@ -41,6 +41,17 @@ public class AuthorizeController extends BaseController {
     @Resource
     private ShiroCacheUtil shiroCacheUtil;
 
+    /**
+     * Oauth2-单点登录；
+     * 解决的问题：
+     * 允许aaa访问你的系统； 密码最好用，但是不能直接给 aaa 【家-钥匙】;
+     * 需要升级钥匙的方案，如升级为指纹锁（即令牌，token）；
+     * @param model
+     * @param request
+     * @return
+     * @throws OAuthSystemException
+     * @throws URISyntaxException
+     */
     @RequestMapping("authorize")
     public Object authorize(Model model, HttpServletRequest request) throws OAuthSystemException, URISyntaxException {
 
@@ -54,7 +65,7 @@ public class AuthorizeController extends BaseController {
                 return HttpResponseBody.failResponse("客户端验证失败，如错误的client_id/client_secret");
             }
 
-            // 判断用户是否登录
+            // 1.判断用户是否登录
             Subject subject = SecurityUtils.getSubject();
 
             if(!subject.isAuthenticated()) {
@@ -64,7 +75,7 @@ public class AuthorizeController extends BaseController {
             }
             String username = (String) subject.getPrincipal();
 
-            //生成授权码
+            //2.生成授权码
             String authorizationCode = null;
 
             String responseType = oAuthAuthzRequest.getParam(OAuth.OAUTH_RESPONSE_TYPE);
@@ -94,7 +105,7 @@ public class AuthorizeController extends BaseController {
         if(StringUtils.isEmpty(username) || StringUtils.isEmpty(password)) {
             return false;
         }
-
+//      3.根据授权码-生成令牌-token
         UsernamePasswordToken token = new UsernamePasswordToken(username, password);
 
         try {

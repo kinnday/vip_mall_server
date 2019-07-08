@@ -60,6 +60,7 @@ public class OAuth2AuthenticationFilter extends AuthenticatingFilter {
 
     @Override
     protected AuthenticationToken createToken(ServletRequest request, ServletResponse response) throws Exception {
+//      根据请求生成token
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
         String code = this.getCodeFromCookie(httpServletRequest);
         return new OAuth2Token(code);

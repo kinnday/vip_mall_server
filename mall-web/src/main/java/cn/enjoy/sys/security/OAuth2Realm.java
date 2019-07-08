@@ -51,6 +51,7 @@ public class OAuth2Realm extends AuthorizingRealm {
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
         OAuth2Token oAuth2Token = (OAuth2Token) token;
+//      获取token，进行认证
         String code = oAuth2Token.getAuthCode();
         try {
             String username = extractUsername(code);
@@ -67,17 +68,18 @@ public class OAuth2Realm extends AuthorizingRealm {
         OAuthClient oAuthClient = new OAuthClient(new URLConnectionClient());
         try {
             OAuthClientRequest accessTokenRequest = OAuthClientRequest.tokenLocation(accessTokenUrl)
-                    .setGrantType(GrantType.AUTHORIZATION_CODE)
+                    .setGrantType(GrantType.AUTHORIZATION_CODE) //授权码方式
                     .setClientId(clientId)
                     .setClientSecret(clientSecret)
                     .setCode(code)
                     .setRedirectURI(redirectUrl)
                     .setParameter("sid", SecurityUtils.getSubject().getSession().getId().toString())
                     .buildQueryMessage();
+//          获取用户信息
             OAuthAccessTokenResponse oAuthResponse = oAuthClient.accessToken(accessTokenRequest, OAuth.HttpMethod.POST);
             String accessToken = oAuthResponse.getAccessToken();
 
-            //拿用户信息
+            //-拿用户信息
             OAuthClientRequest userInfoRequest = new OAuthBearerClientRequest(userInfoUrl)
                     .setAccessToken(accessToken).buildQueryMessage();
 
@@ -85,6 +87,7 @@ public class OAuth2Realm extends AuthorizingRealm {
 
             String userJson = resourceResponse.getBody();
             SysUser user = JsonUtils.json2Obj(userJson, SysUser.class);
+//          保存的session
             this.setResource(user, accessToken);
             return user.getUserName();
         } catch(OAuthSystemException e) {

@@ -28,6 +28,7 @@ spring:
 shiro:
   maxAge:
     day: 10
+#  单点登录配置信息
 sso:
   loginUrl: /api/system/unLogin
   client-id: c1ebe466-1cdc-4bd3-ab69-77c3561b9dee
