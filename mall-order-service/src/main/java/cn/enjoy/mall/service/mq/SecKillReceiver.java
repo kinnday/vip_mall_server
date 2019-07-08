@@ -26,6 +26,7 @@ public class SecKillReceiver implements ChannelAwareMessageListener {
     @Override
     public void onMessage(Message message, Channel channel) throws Exception {
         try {
+//          3.接收消息-并处理
             String msg = new String(message.getBody());
             System.out.println("UserReceiver>>>>>>>接收到消息:"+msg);
             try {
@@ -33,7 +34,9 @@ public class SecKillReceiver implements ChannelAwareMessageListener {
 
                 String kill_order_user = KillConstants.KILL_ORDER_USER+vo.getKillGoodsSpecPriceDetailVo().getId()+vo.getUserId();
                 if (null != stringRedisTemplate.opsForValue().get(kill_order_user)){//未超时，则业务处理
+//                    插入数据库
                     int orderId = orderService.killOrder(vo);
+//                    并且更新缓存信息； 记录真实的订单id， 初始为undo=1
                     String oldstr = stringRedisTemplate.opsForValue().getAndSet(kill_order_user,String.valueOf(orderId));
                     if (null == oldstr){//已超时，生产端已拒绝
                         orderService.cancel(orderId);

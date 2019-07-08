@@ -27,6 +27,14 @@ public class KillSpecController extends BaseController {
         return HttpResponseBody.successResponse("ok", iKillSpecManageService.selectByPrimaryKey(id));
     }
 
+    /**
+     * 秒杀，就是新增一个订单；
+     * 并发量很大时，会导致数据库崩盘，本质问题就是减轻数据库的压力
+     * 1.减少查询数据库的频率，存入redis
+     * 2.订单排队记录到rabbitMQ,依次处理
+     * @param killGoodsPrice
+     * @return
+     */
     @PostMapping("/save")
     public HttpResponseBody save(KillGoodsPrice killGoodsPrice){
         if (killGoodsPrice.getId() == null || killGoodsPrice.getId() == 0){

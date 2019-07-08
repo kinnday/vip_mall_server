@@ -71,6 +71,7 @@ public class KillGoodsManageServiceImpl implements IKillSpecManageService {
     public int update(KillGoodsPrice record) {
         int ret =  killGoodsPriceMapper.updateByPrimaryKey(record);
         if (ret > 0){//当前秒杀配置成功，配置秒杀虚拟库存
+//          更新redis信息
             flushCache(record);
         }
         return ret;
@@ -84,6 +85,7 @@ public class KillGoodsManageServiceImpl implements IKillSpecManageService {
         //失效时间
         long expireTime = record.getEndTime().getTime() - System.currentTimeMillis();
         if (expireTime > 0) {
+//          redis记录秒杀的id和数据量（库存）
             stringRedisTemplate.opsForValue().set(killGoodCount, record.getKillCount().toString(), expireTime, TimeUnit.MILLISECONDS);
         } else {
             stringRedisTemplate.delete(killGoodCount);

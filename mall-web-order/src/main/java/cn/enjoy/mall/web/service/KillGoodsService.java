@@ -95,16 +95,19 @@ public class KillGoodsService  {
 
     public boolean secKill(int killId,String userId) {
         long is = redisTemplate.opsForSet().add(KillConstants.KILLED_GOOD_USER+killId,userId);
-        if (is == 0){//判断用户已经秒杀过，直接返回当次秒杀失败
-//            return false;
+        if (is == 0){
+            //判断用户已经秒杀过，直接返回当次秒杀失败
+//          正常业务流程需要放开！
+            return false;
         }
 
+//      千万不能超卖
         final String killGoodCount = KillConstants.KILL_GOOD_COUNT+killId;
         if(redisTemplate.opsForValue().increment(killGoodCount,-1) < 0){
             return false;
         }
 
-        //秒杀成功，缓存秒杀用户和商品
+        //秒杀成功，缓存-秒杀用户和商品，避免用户重复秒杀！
         redisTemplate.opsForSet().add(KillConstants.KILLGOOD_USER,killId+userId);
         return true;
     }
@@ -118,6 +121,7 @@ public class KillGoodsService  {
         return isKilld;
     }
 
+//  接收订单请求
     public String submitOrder(int addressId, int killId,String userId){
         KillGoodsSpecPriceDetailVo killGoods = detail(killId);
 
@@ -129,20 +133,25 @@ public class KillGoodsService  {
         ValueOperations<String,String> valueOperations = stringRedisTemplate.opsForValue();
 
         //订单有效时间3秒
+//      1. 初始信息保存到redis； 用户id+商品id ； 记录状态为 undo
         String kill_order_user = KillConstants.KILL_ORDER_USER+killId+userId;
         valueOperations.set(kill_order_user,KillConstants.KILL_ORDER_USER_UNDO,3000,TimeUnit.MILLISECONDS);
         /*同步转异步，发送到消息队列*/
+//        2.发送 给消息队里
         secKillSender.send(vo);
 
         String orderId = "";
         try {
             while (true){
                 orderId = valueOperations.get(KillConstants.KILL_ORDER_USER+killId+userId);
-                if (null == orderId){//处理超时，则直接置秒杀失败，取消秒杀订单
+                if (null == orderId){
+                    //处理超时，则直接置秒杀失败，取消秒杀订单
                     return null;
                 }
-                if (!KillConstants.KILL_ORDER_USER_UNDO.equals(orderId)){//订单已处理成功
+                if (!KillConstants.KILL_ORDER_USER_UNDO.equals(orderId)){
+                    //订单已处理成功，有正常的 orderId 了
                     stringRedisTemplate.delete(kill_order_user);
+//                  返回给前端
                     return orderId.toString();//
                 }
                 Thread.sleep(300l);//300ms轮循1次
